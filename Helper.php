@@ -29,9 +29,9 @@ class Helper
 	public $input_bootstrap = 0;
 
 	public $parameters = array(
-		'input_name' => null,
-		'input_value' => null,
-		'label_name' => null,
+		'input_name' => '',
+		'input_value' => '',
+		'label_name' => '',
 		'placeholder' => '',
 		'readonly' => '',
 		'default_selected' => '',
