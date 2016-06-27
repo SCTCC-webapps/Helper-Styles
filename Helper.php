@@ -29,9 +29,9 @@ class Helper
 	public $input_bootstrap = 0;
 
 	public $parameters = array(
-		'input_name' => '',
-		'input_value' => '',
-		'label_name' => '',
+		'input_name' => null,
+		'input_value' => null,
+		'label_name' => null,
 		'placeholder' => '',
 		'readonly' => '',
 		'default_selected' => '',
@@ -150,7 +150,8 @@ class Helper
 
 		echo "
         <div"; if($variables['bootstrap'] && $variables['width']) echo" class='col-lg-".$variables['width']." col-md-".$variables['width']." col-sm-".$variables['width']."'"; echo">
-            <textarea "; if($variables['bootstrap']) echo" class='form-control' "; echo" name='".$array['input_name']."' "; if($variables['height']) echo" rows='".$variables['height']."'"; echo" id='".$array['input_name']."'>".$array['input_value']."</textarea>
+            <textarea "; if($variables['bootstrap']) echo" class='form-control' "; echo" name='".$array['input_name']."' "; if($variables['height']) echo" rows='".$variables['height']."'"; echo" id='".$array['input_name']."'"; if($array['readonly']) echo " readonly";
+		echo">".$array['input_value']."</textarea>
         </div>";
 	}
 
