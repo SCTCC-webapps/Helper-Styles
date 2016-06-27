@@ -135,7 +135,7 @@ class Helper
 
 		echo'
            <div '; if($variables['width']) echo'class="col-lg-'.$variables['width'].' col-md-'.$variables['width'].' col-sm-'.$variables['width'].' padded-light"'; echo'>
-               <label class="'; if(ucfirst($variables['orientation'] == 'V')) echo 'checkbox-inline'; echo 'pull-left"><input type="checkbox" name="'.$array['input_name'].'" id="'.$array['input_name'].'" value="'.$array['input_value'].'"'; if($array['checked']) echo'checked'; echo'>'.$array['label_name'].'</label>
+               <label class="checkbox-inline pull-left"><input type="checkbox" name="'.$array['input_name'].'" id="'.$array['input_name'].'" value="'.$array['input_value'].'"'; if($array['checked']) echo'checked'; echo'>'.$array['label_name'].'</label>
            </div>
            ';
 	}
