@@ -341,6 +341,53 @@
             $sth->execute();
         }
 
+		        //Same as dynamic_sql_insert, but takes in an assoc array instead of using $_POST.
+        function parametized_sql_insert($table_name, $names){
+            global $dbh;
+
+
+            try {
+                $sql = "INSERT INTO " . $table_name . " SET ";
+
+                $size = count($names);
+//echo "<br/>" . $size . "<br />";
+                //array_count_values will default have the size of the array in as a value, so we need to account for that.
+                foreach($names as $key => $value) {
+                    echo $key . "=>" . $value . "<hr />";
+
+                    $size--;
+                    //If item is not the last in array, comma-separate the list.
+                    if($size > 0){
+                        $sql .= $key . " = :" . $key . ", ";
+                    } else{
+                        $sql .= $key . " = :" . $key;
+                    }
+                }
+
+//echo "<br/>". $this->showQuery($sql, $names)."<br/>";
+
+
+                //The reason for two foreach loops is that we need our prepare statement before we bind.
+                //We cannot have the prepare fire off for every single key/value pair.
+                $sth = $dbh->prepare($sql);
+
+                foreach($names as $key => $value) {
+                    //Do not include submit button.
+                    //if($value == 'Submit application') continue;
+
+                    if(!is_null($value) && $value != ''){
+                        $sth->bindValue(':' . $key, $value);
+                    } else{
+                        $sth->bindValue(':' . $key, null, PDO::PARAM_INT);
+                    }
+                }
+//echo "<br />" . $sql . "<br />";
+                $sth->execute();
+            }catch(PDOException $e){
+                echo "Error: -> " . $e->getMessage();
+            }
+        }
+		
         function dynamic_sql_update($table_name, $where_field, $where_value)
         {
             global $dbh;
@@ -400,6 +447,66 @@
 //echo "<p>".$sql."</p>";
         }
 
+		        //Same as dynamic update, but takes in an assoc array instead of assuming $_POST
+        function parametized_sql_update($table_name, $names, $where_field, $where_value)
+        {
+            global $dbh;
+
+            $sql = "UPDATE " . $table_name . " SET ";
+
+//print_r($_POST);
+            //We are counting the total amount of set variables in the $names.
+            $size = count($names);
+            //array_count_values will default have the size of the array in as a value, so we need to account for that.
+            //if($size > 1) {
+            foreach ($names as $key => $value) {
+                //Do not include submit button.
+                if($value == 'Submit application'){
+                    $size--;
+                    continue;
+                }
+
+                $size--;
+                //If item is not the last in array, comma-separate the list.
+                if ($size > 0) {
+                    $sql .= $key . " = :" . $key . ", ";
+                } else {
+                    $sql .= $key . " = :" . $key;
+                }
+            }
+            //Where clause
+            $sql .= " WHERE " . $where_field . " = :where_value";
+//echo $this->showQuery($sql, $names);
+//echo $where_value;
+
+//echo $sql;
+
+            //The reason for two foreach loops is that we need our prepare statement before we bind.
+            //We cannot have the prepare fire off for every single key/value pair.
+            $sth = $dbh->prepare($sql);
+
+            $sth->bindValue(':where_value', $where_value);
+
+            foreach ($names as $key => $value) {
+                //Do not include submit button.
+                if($key == 'Submit application') continue;
+
+                $dbh->quote($value);
+
+                //If it has a value. Else, specify it as a null value.
+                if (!is_null($value) && $value != '') {
+                    $sth->bindValue(':' . $key, $value);
+                }else{
+                    $sth->bindValue(':' . $key, null, PDO::PARAM_INT);
+                }
+            }
+
+            $sth->execute();
+            //}
+
+//echo "<p>".$sql."</p>";
+        }
+		
         /**
          * @param $query Your $sql statement.
          * @param $params An array. I generally pass the $_POST[] array, but to add $_GET[], etc, you will need to make your own and pass that through.
