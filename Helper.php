@@ -108,7 +108,7 @@
             echo "<div"; if($variables['width'] && $variables['bootstrap']) echo" class='col-lg-".$variables['width']." col-md-".$variables['width']." col-sm-".$variables['width']."'"; echo">";
             echo "<select name='".$array['input_name']."' id='".$array['input_name']."'"; if($variables['bootstrap']) echo" class='form-control'"; echo">";
             //Setting placeholder, if someone set it.
-            if($array['default_selected'] && $array['selected'] == '') echo "<option selected='selected' "; if($array['default_selected']=='Select one') echo "value='-1'" .$array['default_selected']."</option>";
+            if($array['default_selected'] && $array['selected'] == '') echo "<option selected='selected' "; if($array['default_selected']=='Select one') echo "value='-1'"; echo">".$array['default_selected']."</option>";
 
             //If the user supplied their own keys to use, look them up and supply them in the <option>, else, just re-use the label as the key.
             if($array_values){
@@ -299,11 +299,17 @@
             return $variables;
         }
 
-        function dynamic_sql_insert($table_name)
+        function dynamic_sql_insert($table_name, $id_name = null, $id = null)
         {
             global $dbh;
 
             $sql = "INSERT INTO " . $table_name . " SET ";
+
+            //If $id is set, we specify it in the query. (this is for multi-table setups)
+            if($id_name && $id){
+                $sql .= $id_name . ' = "' . $id . '", ';
+            }
+
 
 //print_r($_POST);
 
@@ -320,7 +326,6 @@
                 }
             }
 
-//echo "<br/>". $this->showQuery($sql, $_POST)."<br/>";
 
 
             //The reason for two foreach loops is that we need our prepare statement before we bind.
@@ -328,8 +333,8 @@
             $sth = $dbh->prepare($sql);
 
             foreach ($_POST as $key => $value) {
-                //Do not include submit button.
-                //if($value == 'Submit application') continue;
+//echo $key . "=>" . $value . "<hr />";
+
 
                 if (!is_null($value) && $value != '') {
                     $sth->bindValue(':' . $key, $value);
@@ -338,10 +343,12 @@
                 }
             }
 //echo "<br />" . $sql . "<br />";
+//echo "<br/>". $this->showQuery($sql, $_POST)."<br/>";
+
             $sth->execute();
         }
 
-		        //Same as dynamic_sql_insert, but takes in an assoc array instead of using $_POST.
+        //Same as dynamic_sql_insert, but takes in an assoc array instead of using $_POST.
         function parametized_sql_insert($table_name, $names){
             global $dbh;
 
@@ -353,7 +360,7 @@
 //echo "<br/>" . $size . "<br />";
                 //array_count_values will default have the size of the array in as a value, so we need to account for that.
                 foreach($names as $key => $value) {
-                    echo $key . "=>" . $value . "<hr />";
+//echo $key . "=>" . $value . "<hr />";
 
                     $size--;
                     //If item is not the last in array, comma-separate the list.
@@ -363,8 +370,6 @@
                         $sql .= $key . " = :" . $key;
                     }
                 }
-
-//echo "<br/>". $this->showQuery($sql, $names)."<br/>";
 
 
                 //The reason for two foreach loops is that we need our prepare statement before we bind.
@@ -382,12 +387,14 @@
                     }
                 }
 //echo "<br />" . $sql . "<br />";
+//echo "<br/>". $this->showQuery($sql, $names)."<br/>";
+
                 $sth->execute();
             }catch(PDOException $e){
                 echo "Error: -> " . $e->getMessage();
             }
         }
-		
+
         function dynamic_sql_update($table_name, $where_field, $where_value)
         {
             global $dbh;
@@ -447,7 +454,7 @@
 //echo "<p>".$sql."</p>";
         }
 
-		        //Same as dynamic update, but takes in an assoc array instead of assuming $_POST
+        //Same as dynamic update, but takes in an assoc array instead of assuming $_POST
         function parametized_sql_update($table_name, $names, $where_field, $where_value)
         {
             global $dbh;
@@ -506,7 +513,7 @@
 
 //echo "<p>".$sql."</p>";
         }
-		
+
         /**
          * @param $query Your $sql statement.
          * @param $params An array. I generally pass the $_POST[] array, but to add $_GET[], etc, you will need to make your own and pass that through.

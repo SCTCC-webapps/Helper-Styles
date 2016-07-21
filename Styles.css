@@ -1,15 +1,20 @@
 .panel{
-    margin-top: 20px;
     border:3px solid black;
     -moz-border-radius:15px;
     border-radius:15px;
     -moz-box-shadow: 3px 3px 4px #000;
     -webkit-box-shadow: 3px 3px 4px #000;
     box-shadow: 3px 3px 4px #000;
+    position:relative;
+                margin:0 auto;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+
 }
 body {
     background-color:#FFFFFF;
-    text-align:center;
+    /*text-align:center;*/
     font-family: Arial, Helvetica, sans-serif;
     background-image:url('BG_1_app.jpg');
     COLOR:#000;
@@ -107,7 +112,11 @@ ul li{
 }
 
 .padded-inline{
-	padding-top: 6px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.padded-inline-bottom{
 	padding-bottom: 6px;
 }
 
@@ -123,8 +132,25 @@ ul li{
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
+
 .underline{
 	text-decoration: underline;
+}
+
+/* To make datepicker placeholders a little more visible. */
+.datepicker ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:    black;
+}
+.datepicker :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    black;
+   opacity:  1;
+}
+.datepicker ::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    black;
+   opacity:  1;
+}
+.datepicker :-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:    black;
 }
 
 
